@@ -1,108 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>250K Leaderboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIKEY T</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .content {
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            letter-spacing: 3px;
+        }
+
+        .info-section {
+            margin: 2rem 0;
+        }
+
+        .socials {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 2rem 0;
+        }
+
+        .social-icon {
+            color: #fff;
+            font-size: 2rem;
+            transition: 0.3s;
+        }
+
+        .social-icon:hover {
+            color: #0ff;
+            transform: scale(1.2);
+        }
+
+        .crypto {
+            margin: 2rem 0;
+        }
+
+        .crypto p {
+            font-family: monospace;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border-left: 2px solid #0ff;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 25px;
+            border: 1px solid #fff;
+            transition: 0.3s;
+        }
+
+        .links a:hover {
+            background: #fff;
+            color: #000;
+        }
+
+        .portfolio-btn {
+            border-color: #0ff;
+            color: #0ff;
+        }
+
+        .portfolio-btn:hover {
+            background: #0ff;
+            color: #000;
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-b from-black via-gray-900 to-black text-white font-sans">
+<body>
+    <!-- Video Background -->
+    <video id="video-bg" autoplay muted loop>
+        <source src="bg.mp4" type="video/mp4">
+    </video>
 
-  <!-- Header -->
-  <div class="text-center py-10 relative">
-    <!-- Winged icons (placeholder divs) -->
-    <div class="absolute top-8 left-4 w-16 h-16 bg-blue-500 rounded-full shadow-lg"></div>
-    <div class="absolute top-8 right-4 w-16 h-16 bg-blue-500 rounded-full shadow-lg"></div>
+    <!-- Main Content -->
+    <div class="content">
+        <h1>MIKEY T</h1>
+        
+        <div class="info-section">
+            <div class="socials">
+                <a href="#" class="social-icon" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-icon" title="Discord">
+                    <i class="fab fa-discord"></i>
+                </a>
+            </div>
 
-    <h1 class="text-4xl font-bold text-yellow-400">250K LEADERBOARD</h1>
-    <p class="mt-2 text-lg">use code: <span class="text-yellow-500 font-semibold">mikeyt</span></p>
-  </div>
+            <div class="crypto">
+                <p>BTC: bc1qyourbtcaddress</p>
+                <p>ETH: 0xYourEthAddress</p>
+            </div>
+        </div>
 
-  <!-- Podium -->
-  <div class="flex justify-center gap-6 items-end px-4">
-    <!-- 2nd Place -->
-    <div class="bg-gray-800 rounded-xl p-4 w-40 text-center">
-      <div class="text-sm">🥈</div>
-      <div class="text-xl font-bold">Mikeyt</div>
-      <div class="text-yellow-300 mt-1">583,345.00</div>
-      <div class="text-white mt-1 text-sm">60,000</div>
+        <div class="links">
+            <a href="https://www.behance.net/MikeytDesigns" target="_blank" class="portfolio-btn">PORTFOLIO</a>
+            <a href="mailto:contact@mikeyt.com">CONTACT</a>
+        </div>
     </div>
 
-    <!-- 1st Place (Center) -->
-    <div class="bg-yellow-500 rounded-xl p-6 w-48 text-center shadow-lg scale-110">
-      <div class="text-lg">👑</div>
-      <div class="text-2xl font-bold text-black">Mikeyt</div>
-      <div class="text-black mt-1 text-lg">590,724.00</div>
-      <div class="text-black mt-1 font-semibold text-sm">80,000</div>
-    </div>
+    <!-- Audio -->
+    <audio id="bg-music" loop>
+        <source src="sound.mp3" type="audio/mpeg">
+    </audio>
 
-    <!-- 3rd Place -->
-    <div class="bg-yellow-900 rounded-xl p-4 w-40 text-center">
-      <div class="text-sm">🥉</div>
-      <div class="text-xl font-bold">Mikeyt</div>
-      <div class="text-yellow-300 mt-1">580,345.00</div>
-      <div class="text-white mt-1 text-sm">30,000</div>
-    </div>
-  </div>
-
-  <!-- Timer -->
-  <div class="text-center my-6">
-    <div class="bg-gray-700 inline-block px-6 py-2 rounded-full text-sm font-medium">⏱️ TIMER: 3 days 17:24:34</div>
-  </div>
-
-  <!-- Leaderboard Table -->
-  <div class="max-w-2xl mx-auto px-4">
-    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-      <div class="grid grid-cols-3 bg-gray-700 text-sm uppercase text-gray-300 font-bold py-3 px-4">
-        <div>Rank</div>
-        <div>Username</div>
-        <div>Wagered</div>
-      </div>
-      <!-- Rows -->
-      <div class="divide-y divide-gray-700 text-center text-sm">
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#4</div>
-          <div>Mikeyt</div>
-          <div>590,452.00</div>
-        </div>
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#5</div>
-          <div>Mikeyt</div>
-          <div>503,924.00</div>
-        </div>
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#6</div>
-          <div>Mikeyt</div>
-          <div>500,634.00</div>
-        </div>
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#7</div>
-          <div>Mikeyt</div>
-          <div>491,341.00</div>
-        </div>
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#8</div>
-          <div>Mikeyt</div>
-          <div>402,134.00</div>
-        </div>
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#9</div>
-          <div>Mikeyt</div>
-          <div>130,395.00</div>
-        </div>
-        <div class="grid grid-cols-3 py-3 px-4">
-          <div>#10</div>
-          <div>Mikeyt</div>
-          <div>90,524.00</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="text-center text-gray-500 text-xs mt-10 mb-4">
-    © 2024 All rights reserved. Leaderboard made by mikeyt productions. | <a href="#" class="underline">Privacy Policy</a>
-  </footer>
-
+    <script>
+        // Auto-play music after user interaction
+        document.addEventListener('click', function() {
+            document.getElementById('bg-music').play();
+            document.getElementById('video-bg').muted = false;
+        }, { once: true });
+    </script>
 </body>
 </html>
