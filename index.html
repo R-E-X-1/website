@@ -11,6 +11,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
+            cursor: none; /* Hide default cursor */
         }
 
         body {
@@ -21,6 +22,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
+            overflow: hidden;
         }
 
         #video-bg {
@@ -37,12 +39,38 @@
         .content {
             max-width: 600px;
             padding: 20px;
+            position: relative;
+            z-index: 10;
         }
 
         h1 {
             font-size: 3rem;
             margin-bottom: 2rem;
             letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        /* Particle Cursor */
+        .cursor-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0ff;
+            pointer-events: none;
+            z-index: 999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s;
+        }
+
+        .particle-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.6);
+            pointer-events: none;
+            z-index: 998;
         }
 
         .info-section {
@@ -60,11 +88,14 @@
             color: #fff;
             font-size: 2rem;
             transition: 0.3s;
+            position: relative;
+            z-index: 20;
         }
 
         .social-icon:hover {
             color: #0ff;
             transform: scale(1.2);
+            text-shadow: 0 0 15px #0ff;
         }
 
         .crypto {
@@ -77,6 +108,14 @@
             padding: 10px;
             background: rgba(0,0,0,0.5);
             border-left: 2px solid #0ff;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            z-index: 20;
+        }
+
+        .crypto p:hover {
+            background: rgba(0, 255, 255, 0.1);
         }
 
         .links {
@@ -93,11 +132,14 @@
             padding: 12px 25px;
             border: 1px solid #fff;
             transition: 0.3s;
+            position: relative;
+            z-index: 20;
         }
 
         .links a:hover {
             background: #fff;
             color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
 
         .portfolio-btn {
@@ -108,6 +150,7 @@
         .portfolio-btn:hover {
             background: #0ff;
             color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -135,8 +178,8 @@
             </div>
 
             <div class="crypto">
-                <p>BTC: bc1qgh6l348ux68uf575p2qw9p47eauhh4lf4wd4jj</p>
-                <p>ETH: 0x4CFBca86FAe2362C7f4E2569D31Df76106f31F5b</p>
+                <p>BTC: bc1qyourbtcaddress</p>
+                <p>ETH: 0xYourEthAddress</p>
             </div>
         </div>
 
@@ -147,18 +190,91 @@
     </div>
 
     <!-- Audio -->
-    <audio id="bg-music" loop>
+    <audio id="bg-audio" loop>
         <source src="sound.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Particle Cursor Elements will be created by JavaScript -->
+    
     <script>
-        // Auto-play music after user interaction
+        // Particle Cursor System
+        const cursor = document.createElement('div');
+        cursor.className = 'cursor-particle';
+        document.body.appendChild(cursor);
+        
+        const particles = [];
+        const particleCount = 12;
+        
+        // Create particle trail
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle-trail';
+            particle.style.opacity = 1 - (i / particleCount);
+            document.body.appendChild(particle);
+            particles.push({
+                element: particle,
+                x: 0,
+                y: 0,
+                delay: i * 50 // Stagger the particles
+            });
+        }
+        
+        let mouseX = 0, mouseY = 0;
+        
+        // Mouse movement
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Main cursor
+            cursor.style.left = (mouseX - 4) + 'px';
+            cursor.style.top = (mouseY - 4) + 'px';
+        });
+        
+        // Animate particles
+        function animateParticles() {
+            // Update particles with delay
+            particles.forEach((particle, index) => {
+                setTimeout(() => {
+                    particle.x = mouseX - 3;
+                    particle.y = mouseY - 3;
+                    particle.element.style.left = particle.x + 'px';
+                    particle.element.style.top = particle.y + 'px';
+                    
+                    // Add some randomness to the trail
+                    if (index > 0) {
+                        const prevParticle = particles[index - 1];
+                        particle.x += (prevParticle.x - particle.x) * 0.3;
+                        particle.y += (prevParticle.y - particle.y) * 0.3;
+                    }
+                }, particle.delay);
+            });
+            
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+        
+        // Hover effects
+        document.querySelectorAll('a, button, .crypto p').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(2)';
+                cursor.style.background = '#ff00ff';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+                cursor.style.background = '#0ff';
+            });
+        });
+
+        // Audio control
         document.addEventListener('click', function() {
-            document.getElementById('bg-music').play();
+            document.getElementById('bg-audio').play();
             document.getElementById('video-bg').muted = false;
         }, { once: true });
 
-        // Copy crypto addresses on click
+        // Copy crypto addresses
         document.querySelectorAll('.crypto p').forEach(el => {
             el.addEventListener('click', () => {
                 const text = el.innerText.split(': ')[1];
