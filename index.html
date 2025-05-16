@@ -34,8 +34,15 @@
             object-fit: cover;
             z-index: -1;
             opacity: 0.3;
-            /* Force mute - no audio will play from video */
             muted: true;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 999;
         }
 
         .content {
@@ -50,29 +57,6 @@
             margin-bottom: 2rem;
             letter-spacing: 3px;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
-        }
-
-        /* Particle Cursor */
-        .cursor-particle {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #0ff;
-            pointer-events: none;
-            z-index: 999;
-            mix-blend-mode: difference;
-            transition: transform 0.1s;
-        }
-
-        .particle-trail {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(0, 255, 255, 0.6);
-            pointer-events: none;
-            z-index: 998;
         }
 
         .info-section {
@@ -156,8 +140,10 @@
     <!-- Video Background (FORCED MUTED) -->
     <video id="video-bg" autoplay muted loop playsinline>
         <source src="bg.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
     </video>
+
+    <!-- Liquid Cursor Canvas -->
+    <canvas id="liquid-cursor"></canvas>
 
     <!-- Main Content -->
     <div class="content">
@@ -191,77 +177,95 @@
     <!-- Audio (only sound source) -->
     <audio id="bg-audio" loop>
         <source src="sound.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
 
-    <!-- Cursor Elements -->
-    <div class="cursor-particle"></div>
-    
     <script>
-        // Create particle trail
-        const particles = [];
-        const particleCount = 12;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle-trail';
-            particle.style.opacity = 1 - (i / particleCount);
-            document.body.appendChild(particle);
-            particles.push({
-                element: particle,
-                x: 0,
-                y: 0,
-                delay: i * 50
-            });
-        }
-        
-        // Cursor movement
-        const cursor = document.querySelector('.cursor-particle');
-        let mouseX = 0, mouseY = 0;
-        
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            cursor.style.left = (mouseX - 4) + 'px';
-            cursor.style.top = (mouseY - 4) + 'px';
-        });
-        
-        // Animate particles
-        function animateParticles() {
-            particles.forEach((particle, index) => {
-                setTimeout(() => {
-                    particle.x = mouseX - 3;
-                    particle.y = mouseY - 3;
-                    particle.element.style.left = particle.x + 'px';
-                    particle.element.style.top = particle.y + 'px';
-                    
-                    if (index > 0) {
-                        const prevParticle = particles[index - 1];
-                        particle.x += (prevParticle.x - particle.x) * 0.3;
-                        particle.y += (prevParticle.y - particle.y) * 0.3;
-                    }
-                }, particle.delay);
-            });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-        
-        // Hover effects
-        document.querySelectorAll('a, button, .crypto p').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'scale(2)';
-                cursor.style.background = '#ff00ff';
-            });
-            el.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'scale(1)';
-                cursor.style.background = '#0ff';
-            });
+        // Liquid Cursor Effect
+        const canvas = document.getElementById("liquid-cursor");
+        const ctx = canvas.getContext("2d");
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         });
 
+        const mouse = { x: width / 2, y: height / 2, moved: false };
+        let lastMouseX = mouse.x;
+        let lastMouseY = mouse.y;
+
+        document.addEventListener("mousemove", e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.moved = (e.clientX !== lastMouseX || e.clientY !== lastMouseY);
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        class Droplet {
+            constructor(x, y, hue) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = Math.random() * -1;
+                this.gravity = 0.3;
+                this.drag = 0.98;
+                this.size = Math.random() * 8 + 4;
+                this.hue = hue;
+                this.alpha = 1;
+            }
+
+            update() {
+                this.vy += this.gravity;
+                this.vx *= this.drag;
+                this.vy *= this.drag;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.01;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.alpha})`;
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const droplets = [];
+        let hue = 0;
+
+        function animateDroplets() {
+            ctx.clearRect(0, 0, width, height);
+
+            hue = (hue + 3) % 360;
+            if (mouse.moved) {
+                for (let i = 0; i < 3; i++) {
+                    droplets.push(new Droplet(mouse.x, mouse.y, (hue + i * 10) % 360));
+                }
+            }
+
+            for (let i = droplets.length - 1; i >= 0; i--) {
+                const d = droplets[i];
+                d.update();
+                d.draw();
+                if (d.alpha <= 0 || d.y > height) {
+                    droplets.splice(i, 1);
+                }
+            }
+
+            mouse.moved = false;
+            requestAnimationFrame(animateDroplets);
+        }
+
+        animateDroplets();
+
         // Audio control (only sound.mp3 will play)
-        document.addEventListener('click', function() {
-            // Video is already muted by attribute
+        document.addEventListener("click", function() {
             document.getElementById('bg-audio').play().catch(e => console.log("Audio play failed:", e));
+            document.getElementById('video-bg').muted = true;
         }, { once: true });
 
         // Copy crypto addresses
