@@ -11,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
-            cursor: none; /* Hide default cursor */
+            cursor: none;
         }
 
         body {
@@ -34,6 +34,8 @@
             object-fit: cover;
             z-index: -1;
             opacity: 0.3;
+            /* Force mute - no audio will play from video */
+            muted: true;
         }
 
         .content {
@@ -110,8 +112,6 @@
             border-left: 2px solid #0ff;
             cursor: pointer;
             transition: 0.3s;
-            position: relative;
-            z-index: 20;
         }
 
         .crypto p:hover {
@@ -132,8 +132,6 @@
             padding: 12px 25px;
             border: 1px solid #fff;
             transition: 0.3s;
-            position: relative;
-            z-index: 20;
         }
 
         .links a:hover {
@@ -155,9 +153,10 @@
     </style>
 </head>
 <body>
-    <!-- Video Background -->
-    <video id="video-bg" autoplay muted loop>
+    <!-- Video Background (FORCED MUTED) -->
+    <video id="video-bg" autoplay muted loop playsinline>
         <source src="bg.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
     </video>
 
     <!-- Main Content -->
@@ -178,8 +177,8 @@
             </div>
 
             <div class="crypto">
-                <p>BTC: bc1qyourbtcaddress</p>
-                <p>ETH: 0xYourEthAddress</p>
+                <p>BTC: bc1qgh6l348ux68uf575p2qw9p47eauhh4lf4wd4jj</p>
+                <p>ETH: 0x4CFBca86FAe2362C7f4E2569D31Df76106f31F5b</p>
             </div>
         </div>
 
@@ -189,23 +188,20 @@
         </div>
     </div>
 
-    <!-- Audio -->
+    <!-- Audio (only sound source) -->
     <audio id="bg-audio" loop>
         <source src="sound.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
 
-    <!-- Particle Cursor Elements will be created by JavaScript -->
+    <!-- Cursor Elements -->
+    <div class="cursor-particle"></div>
     
     <script>
-        // Particle Cursor System
-        const cursor = document.createElement('div');
-        cursor.className = 'cursor-particle';
-        document.body.appendChild(cursor);
-        
+        // Create particle trail
         const particles = [];
         const particleCount = 12;
         
-        // Create particle trail
         for (let i = 0; i < particleCount; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle-trail';
@@ -215,25 +211,23 @@
                 element: particle,
                 x: 0,
                 y: 0,
-                delay: i * 50 // Stagger the particles
+                delay: i * 50
             });
         }
         
+        // Cursor movement
+        const cursor = document.querySelector('.cursor-particle');
         let mouseX = 0, mouseY = 0;
         
-        // Mouse movement
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            
-            // Main cursor
             cursor.style.left = (mouseX - 4) + 'px';
             cursor.style.top = (mouseY - 4) + 'px';
         });
         
         // Animate particles
         function animateParticles() {
-            // Update particles with delay
             particles.forEach((particle, index) => {
                 setTimeout(() => {
                     particle.x = mouseX - 3;
@@ -241,7 +235,6 @@
                     particle.element.style.left = particle.x + 'px';
                     particle.element.style.top = particle.y + 'px';
                     
-                    // Add some randomness to the trail
                     if (index > 0) {
                         const prevParticle = particles[index - 1];
                         particle.x += (prevParticle.x - particle.x) * 0.3;
@@ -249,10 +242,8 @@
                     }
                 }, particle.delay);
             });
-            
             requestAnimationFrame(animateParticles);
         }
-        
         animateParticles();
         
         // Hover effects
@@ -261,17 +252,16 @@
                 cursor.style.transform = 'scale(2)';
                 cursor.style.background = '#ff00ff';
             });
-            
             el.addEventListener('mouseleave', () => {
                 cursor.style.transform = 'scale(1)';
                 cursor.style.background = '#0ff';
             });
         });
 
-        // Audio control
+        // Audio control (only sound.mp3 will play)
         document.addEventListener('click', function() {
-            document.getElementById('bg-audio').play();
-            document.getElementById('video-bg').muted = false;
+            // Video is already muted by attribute
+            document.getElementById('bg-audio').play().catch(e => console.log("Audio play failed:", e));
         }, { once: true });
 
         // Copy crypto addresses
@@ -287,6 +277,9 @@
                 });
             });
         });
+
+        // Force mute video (double protection)
+        document.getElementById('video-bg').muted = true;
     </script>
 </body>
 </html>
