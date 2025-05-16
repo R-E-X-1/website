@@ -123,11 +123,14 @@
         
         <div class="info-section">
             <div class="socials">
-                <a href="#" class="social-icon" title="Twitter">
+                <a href="https://x.com/Gorillacoinss" target="_blank" class="social-icon" title="Twitter">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="#" class="social-icon" title="Discord">
+                <a href="https://discord.gg/versanitys" target="_blank" class="social-icon" title="Discord">
                     <i class="fab fa-discord"></i>
+                </a>
+                <a href="https://t.me/Mikeytsells" target="_blank" class="social-icon" title="Telegram">
+                    <i class="fab fa-telegram"></i>
                 </a>
             </div>
 
@@ -154,6 +157,20 @@
             document.getElementById('bg-music').play();
             document.getElementById('video-bg').muted = false;
         }, { once: true });
+
+        // Copy crypto addresses on click
+        document.querySelectorAll('.crypto p').forEach(el => {
+            el.addEventListener('click', () => {
+                const text = el.innerText.split(': ')[1];
+                navigator.clipboard.writeText(text).then(() => {
+                    const original = el.innerText;
+                    el.innerText = el.innerText.split(': ')[0] + ': COPIED!';
+                    setTimeout(() => {
+                        el.innerText = original;
+                    }, 2000);
+                });
+            });
+        });
     </script>
 </body>
 </html>
